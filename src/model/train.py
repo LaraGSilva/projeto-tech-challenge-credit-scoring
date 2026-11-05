@@ -3,7 +3,6 @@ import joblib
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, roc_auc_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
@@ -11,6 +10,7 @@ from src.config import (CATEGORICAL_FEATURES, FEATURES, MODEL_PATH, NUMERIC_FEAT
                         REFERENCE_PATH, SEED, TARGET, TEST_BASE_PATH)
 from src.contracts.validate import validate_batch
 from src.monitoring.logging_setup import get_logger
+from src.monitoring.metrics import evaluate
 
 log = get_logger("model")
 
@@ -22,12 +22,6 @@ def build_pipeline() -> Pipeline:
     ])
     clf = LogisticRegression(max_iter=1000, class_weight="balanced", random_state=SEED)
     return Pipeline([("pre", pre), ("clf", clf)])
-
-
-def evaluate(model: Pipeline, df: pd.DataFrame) -> dict:
-    proba = model.predict_proba(df[FEATURES])[:, 1]
-    return {"auc": round(roc_auc_score(df[TARGET], proba), 4),
-            "accuracy": round(accuracy_score(df[TARGET], proba >= 0.5), 4)}
 
 
 def main() -> None:
