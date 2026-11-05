@@ -71,3 +71,10 @@ FEATURES = NUMERIC_FEATURES + CATEGORICAL_FEATURES
 # Atributo sensível: codifica estado civil + sexo. NÃO entra no modelo (LGPD/viés),
 # mas é mantido no dado para auditoria de viés.
 SENSITIVE = "estado_civil_sexo"
+
+# Observabilidade: alertas e rastreamento (MLflow local, sem infraestrutura extra).
+ALERT_PSI_MEAN = 0.10   # alerta se o PSI médio das features passar disso
+ALERT_AUC_DROP = 0.05   # alerta se a AUC cair mais que isso vs. teste base (hold-out)
+MLFLOW_DB_URI = f"sqlite:///{(ROOT / 'mlflow.db').as_posix()}"
+MLFLOW_ARTIFACTS = ROOT / "mlruns"
+MLFLOW_EXPERIMENT = "credit-risk-observability"

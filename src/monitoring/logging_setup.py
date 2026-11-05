@@ -6,6 +6,15 @@ from datetime import datetime, timezone
 
 from src.config import LOGS_DIR
 
+_run_id: str | None = None
+
+
+def set_run_id(run_id: str | None) -> None:
+    """Passa a anexar `run_id` a todo log emitido, para correlacionar uma execução."""
+    global _run_id
+    _run_id = run_id
+
+
 _RESERVED = set(logging.LogRecord("", 0, "", 0, "", (), None).__dict__) | {"message", "asctime"}
 
 
@@ -17,6 +26,8 @@ class JsonFormatter(logging.Formatter):
             "logger": record.name,
             "event": record.getMessage(),
         }
+        if _run_id:
+            payload["run_id"] = _run_id
         payload.update({k: v for k, v in record.__dict__.items() if k not in _RESERVED})
         return json.dumps(payload, ensure_ascii=False, default=str)
 
