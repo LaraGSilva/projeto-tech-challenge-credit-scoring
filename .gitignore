@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+mlruns/
+logs/*
+!logs/.gitkeep
+models/
+.ipynb_checkpoints/
+.pytest_cache/
+.env
+data/production/*.csv
+reports/*.html
+reports/*.csv
+!reports/.gitkeep
+mlflow.db
+reports/*.json
