@@ -1,15 +1,8 @@
 # Plano técnico: Credit Scoring com observabilidade e drift
 
-## Ponto de atenção antes de começar
+## Modelo para predição de score de crédito
 
-O PDF cita o German Credit Data como exemplo, mas também exige **pelo menos 5.000 amostras**. O German Credit tem cerca de **1.000 linhas**, então não atende a esse requisito. Antes de avançar, confirme com o professor ou no Discord se o German Credit é aceito. Se não for, as alternativas do próprio PDF são o Home Credit Default Risk ou o Lending Club. Este plano usa o German Credit, mas a estrutura funciona com qualquer um dos três.
-
-Outras limitações do dataset:
-
-- **Não há coluna de renda.** A regra "limite de renda" do PDF pode ser substituída por limites de `Credit amount` e `Duration`, e documentada como adaptação.
-- **Não há taxa de desemprego nem inflação.** A simulação de degradação precisa ser construída sobre variáveis existentes.
-- **Valores ausentes** em `Saving accounts` e `Checking account`. Isso é útil, porque serve como primeira regra de qualidade real.
-- **Dados pessoais** (idade, sexo, emprego, moradia). Por isso a documentação LGPD é importante mesmo com dados públicos.
+O projeto desenvolvido tem o principal objetivo de garantir a sustentação e confiabilidade da pipeline de treino, teste e retreino. Devido a suscetibilidade de mudança nos dados, é importante aplicar um plano de monitoramento da qualidade, quantiadade e conceito dos dados além de ter atenção a uma possível degradação silenciosa também.
 
 ## Visão geral do fluxo
 
@@ -212,56 +205,3 @@ def psi(expected, actual, bins=10):
 - Explique por que drift nas features **não** implica automaticamente mudança causal, e como o concept drift se diferencia disso.
 - Discuta a limitação: o modelo prevê associação, e não causa.
 
-### Vídeo STAR (5 minutos)
-
-- **Situation** (1 min): risco da degradação silenciosa em crédito.
-- **Task** (1 min): requisitos técnicos.
-- **Action** (1,5 min): ferramentas e simulação de drift.
-- **Result** (1,5 min): relatório com drift, alertas e lições aprendidas.
-
-**Entregável:** README completo com governança, LGPD, causalidade e link do vídeo.
-
----
-
-## Histórico de commits (semântico)
-
-```
-chore: estrutura inicial do repositório e requirements
-feat(data): carregamento e split estratificado do german credit
-feat(model): modelo baseline de regressão logística
-feat(contracts): schema Pandera com 5 regras de qualidade
-test(contracts): casos válidos e inválidos
-feat(contracts): bloqueio de ingestão com log de violações
-feat(simulation): lotes t1, t2, t3 com data e concept drift
-feat(monitoring): cálculo de PSI e KS com testes
-feat(monitoring): relatórios Evidently por lote
-feat(observability): logs estruturados e integração com MLflow
-feat(dashboard): relatório HTML consolidado de saúde
-docs: governança, LGPD e análise causal no README
-docs: link do vídeo STAR
-```
-
-Use um commit por unidade lógica de trabalho, e não um commit gigante por etapa. Isso também facilita a apresentação do histórico.
-
----
-
-## Cronograma sugerido
-
-| Semana | Foco | Entregável |
-|---|---|---|
-| 1 | Setup, dados, modelo base, contratos | Etapa 1 concluída |
-| 2 | Simulação de drift, PSI, Evidently | Etapa 2 concluída |
-| 3 | Logs, MLflow, dashboard | Etapa 3 concluída |
-| 4 | README de governança, revisão, vídeo | Etapa 4 e entrega final |
-
-Ajuste o cronograma ao prazo real da disciplina. A Etapa 4 costuma ser subestimada, então comece o README cedo e vá preenchendo ao longo das outras etapas.
-
----
-
-## Como usar o modelo ao longo do projeto
-
-- **Sonnet 5.5** para implementar cada módulo, escrever testes e gerar os relatórios.
-- **Opus 5.5** para revisar o desenho do DAG causal e para depurar problemas de drift difíceis de explicar.
-- **Haiku 5.5** para mensagens de commit, formatação de tabelas e revisão ortográfica do README.
-
-Para cada módulo, peça ao modelo para explicar a lógica estatística e confira alguns valores de PSI manualmente. A análise precisa ser entendida pelo grupo, porque ela será explicada no vídeo.
