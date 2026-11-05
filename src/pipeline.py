@@ -15,6 +15,7 @@ from src.data import split
 from src.data.load import load_raw
 from src.model import train
 from src.model.predict import load_model
+from src.monitoring.dashboard import build_dashboard
 from src.monitoring.drift_report import drift_table, evidently_report
 from src.monitoring.logging_setup import get_logger, set_run_id
 from src.monitoring.metrics import BATCHES, metrics_by_batch
@@ -88,11 +89,13 @@ def run() -> dict:
                       "alerts_triggered": sum(b["alerts_triggered"] for b in batches_summary.values())}
             mlflow.log_metrics(health)
             log.info("pipeline finalizado", extra={"mlflow_run_id": parent.info.run_id, **health})
+            summary = {"run_id": run_id, "health": health, "step_timings_s": timings,
+                       "batches": batches_summary}
+            REPORTS_DIR.mkdir(exist_ok=True)
+            (REPORTS_DIR / "pipeline_summary.json").write_text(
+                json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+            build_dashboard(summary, REPORTS_DIR)
 
-    summary = {"run_id": run_id, "health": health, "step_timings_s": timings, "batches": batches_summary}
-    REPORTS_DIR.mkdir(exist_ok=True)
-    (REPORTS_DIR / "pipeline_summary.json").write_text(
-        json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
     return summary
 
 
