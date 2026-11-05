@@ -13,3 +13,5 @@ data/production/*.csv
 reports/*.html
 reports/*.csv
 !reports/.gitkeep
+mlflow.db
+reports/*.json
