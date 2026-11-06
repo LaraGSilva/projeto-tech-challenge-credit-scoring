@@ -25,8 +25,6 @@ Como ler:
 - **Idade** influencia o que se pede (valor e prazo) e a estabilidade de renda.
 - **Renda e estabilidade de renda não existem no dataset.** O modelo só enxerga os sinais indiretos (valor, prazo, idade, patrimônio, emprego).
 
-O grafo é uma hipótese de trabalho, **não foi validado com dados**. Deve ser revisado pelo grupo.
-
 ## 2. Como a simulação traduz o DAG
 
 O dataset não tem inflação nem desemprego. Duas simplificações:
@@ -73,8 +71,3 @@ A AUC mede apenas a ordenação dos clientes por risco. Deslocar valor, prazo e 
 5. **Amostra pequena** (1.000 linhas no total), abaixo dos 5.000 que o enunciado pede.
 6. **Sem variáveis macroeconômicas reais.** Inflação e desemprego do DAG não foram medidos.
 
-## 5. Como avançar
-
-- Usar dados reais de inflação/desemprego (ex.: IBGE/BCB) em um dataset maior, como o Home Credit, para testar o DAG.
-- Estimar o efeito de valor e prazo com ajuste por confundidores, em vez de ler coeficientes.
-- Monitorar em produção o desempenho com rótulos atrasados, além do PSI.

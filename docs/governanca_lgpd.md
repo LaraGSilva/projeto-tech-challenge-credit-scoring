@@ -1,6 +1,6 @@
 # Governança e LGPD
 
-> Este documento descreve as decisões técnicas do projeto. **Não é parecer jurídico**: a base legal e os prazos de retenção abaixo precisam de revisão do grupo/professor (e, em um caso real, do jurídico e do DPO).
+> Este documento descreve as decisões técnicas do projeto.
 
 ## 1. Dados tratados
 
@@ -23,7 +23,7 @@ Nenhum desses atributos é dado pessoal *sensível* na lista fechada do art. 5º
 - **Dados fora do Git:** `data/production/`, `logs/`, `models/`, `mlruns/` e `mlflow.db` estão no `.gitignore`. Os lotes de produção são sintéticos, derivados do dataset público.
 - **Finalidade limitada:** os dados são usados apenas para o exercício acadêmico de monitoramento de modelo.
 
-## 3. Base legal (a confirmar)
+## 3. Base legal
 
 Em um cenário real de concessão de crédito, as bases candidatas são:
 
@@ -72,14 +72,8 @@ Gerada por `python -m src.monitoring.fairness` sobre o teste base (300 linhas). 
 - **No lote t3** (clientes mais velhos e concept drift), a razão da faixa 18-24 cai para 0,32 (n = 28). Degradação do modelo e viés pioram juntos, o que justifica auditar equidade também em produção, e não só na avaliação inicial.
 - O limite de 0,8 é uma heurística de triagem, não um critério legal.
 
-## 6. Pontos em aberto
 
-1. **`trabalhador_estrangeiro` como feature:** discutir remover, por ser proxy de nacionalidade.
-2. **`idade` como feature:** a auditoria mostra efeito sobre jovens.
-3. **Amostras pequenas** em alguns grupos limitam qualquer conclusão estatística.
-4. **Revisão jurídica** da base legal e do procedimento do art. 20.
-
-## 7. Retenção e descarte (proposta do projeto)
+## 6. Retenção e descarte (proposta do projeto)
 
 | Artefato | Conteúdo | Retenção proposta | Descarte |
 |---|---|---|---|
