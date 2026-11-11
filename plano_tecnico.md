@@ -156,52 +156,33 @@ def psi(expected, actual, bins=10):
     e, a = np.clip(e, 1e-6, None), np.clip(a, 1e-6, None)
     return float(np.sum((a - e) * np.log(a / e)))
 ```
-
-**Entregável:** HTML do Evidently para cada lote, tabela de features com PSI/KS e identificação clara das variáveis que sofreram drift.
-
-> **Atenção à versão:** a API do Evidently mudou entre versões. Fixe a versão em `requirements.txt` e confira a documentação correspondente antes de escrever o código.
-
 ---
 
 ## Etapa 3: Observabilidade de pipelines e modelos
 
 **Objetivo:** dar visibilidade operacional ao pipeline.
 
-**Escolha de ferramenta:** use **MLflow** (local, gratuito, sem infraestrutura extra) para rastrear experimentos e métricas. Gere também um **dashboard HTML consolidado** com um script. Datadog e Prometheus são opcionais e mais complexos para este prazo.
-
+**Escolha de ferramenta:** use **MLflow** (local, gratuito, sem infraestrutura extra) para rastrear experimentos e métricas. Gere também um **dashboard HTML consolidado** com um script. 
 ### O que registrar
 
 - Por execução do pipeline: status (sucesso/falha), tempo de execução, número de linhas processadas, número de regras de contrato quebradas.
 - Por lote: AUC, acurácia, PSI médio, número de features com drift, alerta gerado (sim/não).
 - Logs estruturados em JSON, com um registro por etapa.
 
-### Métricas de saúde a documentar (no README)
+### Métricas de saúde
 
 - `pipeline_status`, `pipeline_latency_seconds`, `rows_processed`, `contract_violations`, `drift_features_count`, `model_auc`, `alerts_triggered`.
 
 ### Alertas
 
-- Defina limites: por exemplo, alerta se PSI médio > 0,1 ou AUC cair mais de 0,05 em relação à referência.
+- Limites: por exemplo, alerta se PSI médio > 0,1 ou AUC cair mais de 0,05 em relação à referência.
 - Registre cada alerta no log e no dashboard.
-
-**Entregável:** dashboard HTML (ou interface do MLflow) mostrando a saúde do pipeline, a estabilidade do modelo e os alertas de degradação em t1, t2 e t3.
-
 ---
 
-## Etapa 4: Governança e LGPD (README)
+## Etapa 4: Governança e LGPD
 
-**Objetivo:** documentar a arquitetura, a conformidade e a análise causal.
+### 🔍 Análise LGPD
+Acesse o documento: [Análise LGPD](docs\governanca_lgpd.md)
 
-### Plano de proteção de dados
-
-- **Dados pessoais (PII):** idade, sexo, emprego e moradia são dados pessoais. Explique como foram tratados (anonimização, não exposição em logs, uso apenas para fins do projeto).
-- **Base legal:** explique a base legal para a decisão de crédito. Na LGPD, decisões automatizadas de crédito envolvem o art. 7º (execução de contrato ou legítimo interesse, conforme o caso) e o art. 20 (direito de revisão de decisões automatizadas). Confira a base com seu grupo ou professor, porque isso exige revisão jurídica.
-- **Retenção:** defina por quanto tempo os dados e logs são mantidos e como são descartados.
-- **Viés:** o atributo `Sex` não deve ser usado como feature. Compare taxas de aprovação e erro entre sexos e faixas etárias, e documente o resultado.
-
-### Análise causal
-
-- Descreva o grafo causal assumido (DAG): por exemplo, inflação → valor médio solicitado → inadimplência.
-- Explique por que drift nas features **não** implica automaticamente mudança causal, e como o concept drift se diferencia disso.
-- Discuta a limitação: o modelo prevê associação, e não causa.
-
+### 🔍 Análise causal
+Acesse documento: [Análise causal](docs\analise_causal.md)

@@ -3,6 +3,10 @@
 ## Objetivo principal
 O projeto desenvolvido tem o principal objetivo de garantir a sustentação e confiabilidade da pipeline de treino, teste e retreino. Devido a suscetibilidade de mudança nos dados, é importante aplicar um plano de monitoramento da qualidade, quantiadade e conceito dos dados além de ter atenção a uma possível degradação silenciosa também.
 
+
+✨ Acesse o video star: [Link do video](https://canva.link/pr5qa7bl5uep6ue)
+
+
 ## Visão geral
 
 Pipeline de credit scoring com observabilidade e detecção de drift. Um modelo de Regressão Logística estima a probabilidade de inadimplência; o projeto valida os dados de entrada, simula três lotes de produção com degradação crescente, detecta o drift (PSI, KS e Evidently), rastreia métricas e alertas (logs JSON e MLflow) e consolida tudo em um dashboard HTML.
@@ -58,10 +62,6 @@ docs/                  governanca_lgpd.md, analise_causal.md
 ## Dados
 
 O dataset é o *South German Credit*: **1.000 linhas**, 20 atributos codificados como inteiros e o alvo `classe_credito`, sem valores ausentes. O alvo foi invertido para `inadimplente` (1 = mau pagador; 30% dos casos). Split estratificado 70/30 com `random_state=42`: 700 linhas de referência (treino) e 300 de teste base.
-
-> **Atenção:** o enunciado pede pelo menos 5.000 amostras. Este dataset não atende. Confirmar com o professor se é aceito; as alternativas do enunciado são Home Credit e Lending Club. A estrutura do projeto não depende do dataset.
-
-Adaptações em relação ao enunciado: o dataset **não tem renda**, inflação nem desemprego. A inflação foi simulada como multiplicador do valor do crédito e o limite de renda foi substituído por limites de valor e prazo.
 
 ## Etapa 1: contrato de dados
 
@@ -163,21 +163,3 @@ Resultado: t1 sem alertas; t2 dispara `psi_medio_alto`; t3 dispara `psi_medio_al
 
 - **DAG assumido:** inflação → valor solicitado → comprometimento da parcela → inadimplência, com prazo e idade como outras causas e renda como variável não observada.
 - **Drift nas features não implica mudança causal.** Na ablação, o t3 com **só data drift** tem AUC 0,758 (contra 0,760 sem drift), mesmo com PSI de 5,0 em `duracao_credito`. Com concept drift a AUC cai para 0,707. Alertas só de PSI geram falsos positivos e deixam passar o concept drift, que exige acompanhar o desempenho com rótulos.
-- **Limitação:** o modelo prevê associação, não causa. O concept drift foi imposto por construção na simulação, e os dados têm viés de seleção (só clientes aprovados no passado).
-
-## Limitações do projeto
-
-1. Dataset de 1.000 linhas, abaixo dos 5.000 exigidos.
-2. Os três lotes usam as mesmas 300 linhas do teste base, com transformações diferentes; não são amostras independentes.
-3. O concept drift é sintético e sua intensidade (25% e 60%) é arbitrária.
-4. O DAG não foi validado com dados.
-5. Base legal e prazos de retenção precisam de revisão jurídica.
-
-## Vídeo STAR (5 min)
-
-Link: _a preencher_
-
-- **Situation (1 min):** degradação silenciosa em crédito. A acurácia não cai (0,65 → 0,67), mas a AUC cai de 0,76 para 0,71.
-- **Task (1 min):** contrato de dados, simulação de drift, detecção, observabilidade e governança.
-- **Action (1,5 min):** Pandera bloqueando o lote inválido, lotes t1-t3, PSI/KS/Evidently, MLflow e dashboard.
-- **Result (1,5 min):** alertas em t2 e t3, ablação mostrando que o concept drift causa a queda, viés por idade e lições aprendidas.
