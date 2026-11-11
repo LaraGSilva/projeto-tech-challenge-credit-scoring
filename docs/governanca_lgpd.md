@@ -4,7 +4,7 @@
 
 ## 1. Dados tratados
 
-O dataset é o *South German Credit* (1.000 solicitações, público, 20 atributos + alvo). Ele **não contém identificadores diretos** (nome, CPF, endereço, contato). Mesmo assim, vários atributos são dados pessoais quando associados a um indivíduo (LGPD, art. 5º, I) e foram tratados como tal:
+O dataset é o *South German Credit*. Ele **não contém identificadores diretos** (nome, CPF, endereço, contato). Mesmo assim, vários atributos são dados pessoais quando associados a um indivíduo (LGPD, art. 5º, I) e foram tratados como tal:
 
 | Atributo | Por que merece cuidado | Tratamento no projeto |
 |---|---|---|
@@ -83,4 +83,3 @@ Gerada por `python -m src.monitoring.fairness` sobre o teste base (300 linhas). 
 | `mlflow.db`, `mlruns/` | Experimentos e artefatos | 90 dias | Apagar o banco e o diretório |
 | `reports/` | Dashboard, HTMLs do Evidently e tabelas | Regeneráveis | Apagar |
 
-Os 90 dias são uma proposta para o projeto; em produção o prazo deve vir da política da instituição e da obrigação legal de guarda aplicável.
