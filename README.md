@@ -1,13 +1,13 @@
 # projeto-tech-challenge-credit-scoring 📊🔍
 
-## Objetivo principal
+## 🔍 Objetivo principal
 O projeto desenvolvido tem o principal objetivo de garantir a sustentação e confiabilidade da pipeline de treino, teste e retreino. Devido a suscetibilidade de mudança nos dados, é importante aplicar um plano de monitoramento da qualidade, quantiadade e conceito dos dados além de ter atenção a uma possível degradação silenciosa também.
 
 
 ✨ Acesse o video star: [Link do video](https://canva.link/pr5qa7bl5uep6ue)
 
 
-## Visão geral
+## 👩🏻‍💻 Visão geral
 
 Pipeline de credit scoring com observabilidade e detecção de drift. Um modelo de Regressão Logística estima a probabilidade de inadimplência; o projeto valida os dados de entrada, simula três lotes de produção com degradação crescente, detecta o drift (PSI, KS e Evidently), rastreia métricas e alertas (logs JSON e MLflow) e consolida tudo em um dashboard HTML.
 
@@ -21,7 +21,7 @@ dataset ─► split estratificado ─► referência (700) / teste base (300)
               └─► logs JSON + MLflow + dashboard HTML
 ```
 
-## Como rodar
+## ✏️ Como rodar
 
 ```bash
 pip install -r requirements.txt
@@ -43,7 +43,7 @@ Módulos avulsos:
 | `python -m src.monitoring.fairness` | Auditoria de viés por grupo |
 | `python -m src.simulation.ablation` | Separa o efeito do data drift e do concept drift |
 
-## Estrutura do repositório
+## 🏛️ Estrutura do repositório
 
 ```
 src/
@@ -59,11 +59,11 @@ tests/                 contrato, simulação, PSI, drift, observabilidade, falha
 docs/                  governanca_lgpd.md, analise_causal.md
 ```
 
-## Dados
+## 🎲 Dados
 
 O dataset é o *South German Credit*: **1.000 linhas**, 20 atributos codificados como inteiros e o alvo `classe_credito`, sem valores ausentes. O alvo foi invertido para `inadimplente` (1 = mau pagador; 30% dos casos). Split estratificado 70/30 com `random_state=42`: 700 linhas de referência (treino) e 300 de teste base.
 
-## Etapa 1: contrato de dados
+## 🔶 Etapa 1: contrato de dados
 
 O contrato ([schema.py](src/contracts/schema.py)) bloqueia a ingestão: se qualquer regra é quebrada, `validate_batch` levanta `ContractViolation` e registra no log cada regra e quantas linhas a violaram.
 
@@ -88,7 +88,7 @@ Demonstração (`python -m src.contracts.validate --demo`): um lote com idade 15
 
 **Modelo base:** Regressão Logística (`class_weight="balanced"`) com one-hot nas categóricas e padronização nas numéricas. Escolhida por ser interpretável, o que ajuda na análise causal e no direito de revisão (LGPD, art. 20). `estado_civil_sexo` fica fora das features.
 
-## Etapa 2: simulação e detecção de drift
+## 🔶 Etapa 2: simulação e detecção de drift
 
 Três lotes de 300 linhas, derivados do teste base:
 
@@ -117,11 +117,11 @@ Pontos para interpretar:
 - **O Evidently é mais sensível que o PSI** com 300 linhas: marca 4 colunas com drift já em t1, onde o PSI não marca nenhuma.
 - **O PSI não enxerga o concept drift.** Ver [a ablação](docs/analise_causal.md): só o data drift quase não muda a AUC; a queda vem do concept drift.
 
-## Etapa 3: observabilidade
+## 🔶 Etapa 3: observabilidade
 
 `python -m src.pipeline` registra cada execução no MLflow (run pai por execução, run filho por lote), em logs JSON e no dashboard ([dashboard.html](reports/dashboard.html), gerado). Todo log carrega um `run_id`, e cada etapa registra duração e status.
 
-### Métricas de saúde
+### 📊 Métricas de saúde
 
 | Métrica | Nível | Significado |
 |---|---|---|
@@ -135,7 +135,7 @@ Pontos para interpretar:
 
 Também por lote: `accuracy`, `auc_drop`, `psi_mean`.
 
-### Alertas
+### 📍 Alertas
 
 | Alerta | Condição |
 |---|---|
@@ -144,7 +144,7 @@ Também por lote: `accuracy`, `auc_drop`, `psi_mean`.
 
 Resultado: t1 sem alertas; t2 dispara `psi_medio_alto`; t3 dispara `psi_medio_alto` e `queda_auc` (0,0514, por pouco acima do limite). Cada alerta vira um log de nível WARNING e aparece no dashboard. Se o contrato bloqueia os dados, o pipeline termina com `pipeline_status = 0` e o dashboard mostra a falha ([teste](tests/test_pipeline_failure.py)).
 
-## Etapa 4: governança, LGPD e causalidade
+## 🔶 Etapa 4: governança, LGPD e causalidade
 
 ### Proteção de dados (resumo; detalhes em [docs/governanca_lgpd.md](docs/governanca_lgpd.md))
 
@@ -159,7 +159,7 @@ Resultado: t1 sem alertas; t2 dispara `psi_medio_alto`; t3 dispara `psi_medio_al
 - **Idade:** os clientes de 18-24 anos têm 40,4% de aprovação contra 67,7% dos de 35-49 (razão 0,60), e 51,9% dos bons pagadores jovens são negados. No lote t3 a razão cai para 0,32. O modelo usa `idade`, então manter essa feature é uma decisão em aberto.
 - `trabalhador_estrangeiro` (proxy de nacionalidade) também é feature e merece a mesma discussão.
 
-### Análise causal (resumo; detalhes em [docs/analise_causal.md](docs/analise_causal.md))
+### 🔍 Análise causal (resumo; detalhes em [docs/analise_causal.md](docs/analise_causal.md))
 
 - **DAG assumido:** inflação → valor solicitado → comprometimento da parcela → inadimplência, com prazo e idade como outras causas e renda como variável não observada.
 - **Drift nas features não implica mudança causal.** Na ablação, o t3 com **só data drift** tem AUC 0,758 (contra 0,760 sem drift), mesmo com PSI de 5,0 em `duracao_credito`. Com concept drift a AUC cai para 0,707. Alertas só de PSI geram falsos positivos e deixam passar o concept drift, que exige acompanhar o desempenho com rótulos.
